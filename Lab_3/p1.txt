@@ -1,0 +1,23 @@
+func prime(int number){
+if number == 0 | number == 1{
+write(“Number is not prime”) ;
+}
+if number == 2 | number == 3{
+write(“Number is prime”) ;
+}
+Else{
+int flag = 1
+loop index=2; index<=number/2;index=index+1{
+if number % index == 0{
+write(“Number is not prime”) ;
+flag = 0
+}
+}
+}
+if flag == 0{
+write(“Number is not prime”) ;
+}
+Else{
+write(“Number is prime”) ;
+}
+}
