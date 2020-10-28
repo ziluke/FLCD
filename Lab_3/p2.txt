@@ -1,0 +1,13 @@
+func max(int n1, int n2, int n3){
+if n1 > n2 & n1 > n3{
+write("The first number is the maximum");
+}
+else{
+if n2>n1 && n1>n3{
+write("The second number is the maximum");
+}
+else{
+write("The third number is the maximum");
+}
+}
+}

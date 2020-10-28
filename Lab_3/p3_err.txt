@@ -1,0 +1,8 @@
+func sum(int n[10], int size){
+int aux = 0;
+loop index=0;index<size;index=index+1{
+aux = aux + $n[index];
+}
+write("Sum is:);
+write(aux) ;
+}

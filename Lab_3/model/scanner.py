@@ -19,9 +19,6 @@ class Scanner:
         self.__st = SymbolTable()
         self.__pif = []
 
-    def isEscapedQuote(self, line, index):
-        return False if index == 0 else line[index - 1] == '\\'
-
     def isPartOfOperator(self, char):
         for op in self.__operators:
             if char in op:
@@ -33,7 +30,7 @@ class Scanner:
         quoteCount = 0
 
         while index < len(line) and quoteCount < 2:
-            if line[index] == '"' and not self.isEscapedQuote(line, index):
+            if line[index] == '\"':
                 quoteCount += 1
             token += line[index]
             index += 1
@@ -84,10 +81,10 @@ class Scanner:
         return tokens
 
     def isIdentifier(self, token):
-        return re.match(r'^[a-zA-Z]([a-zA-Z]|[0-9]|_){,7}$', token) is not None
+        return re.match(r'^[a-zA-Z]([a-zA-Z]|[0-9]|_)+$', token) is not None
 
     def isConstant(self, token):
-        return re.match('^(0|[\+\-]?[1-9][0-9]*)$|^\'.\'$|^\".*\"$', token) is not None
+        return re.match('^(0|[\+\-]?[1-9][0-9]*)$|^\'[a-zA-Z]\'$|^\"[A-Za-z\\s?]+\"$', token) is not None
 
     def scan(self, fileName):
         file = open(fileName, 'r', encoding='utf-8')
@@ -96,7 +93,8 @@ class Scanner:
             currentLine += 1
             for token in self.tokenGenerator(line[0:-1], self.__separators):
                 if token in self.__separators + self.__operators + self.__reservedWords:
-                    self.__pif.append((self.__codification[token], -1))
+                    if token != ' ':
+                        self.__pif.append((self.__codification[token], -1))
                 elif self.isIdentifier(token):
                     id = self.__st.add(token)
                     self.__pif.append((self.__codification['identifier'], id))
@@ -105,5 +103,18 @@ class Scanner:
                     self.__pif.append((self.__codification['constant'], id))
                 else:
                     print('Unknown token ' + token + ' at line ' + str(currentLine))
-
+        self.__write_pif()
+        self.__write_st()
         return self.__pif
+
+    def __write_pif(self):
+        file = open("PIF.out", "w")
+        for elem in self.__pif:
+            for cod in self.__codification.keys():
+                if self.__codification[cod] == elem[0]:
+                    # print(cod, " ", elem[1])
+                    file.write(cod + " " + str(elem[1]) + "\n")
+
+    def __write_st(self):
+        file = open("ST.out", "w")
+        file.write(self.__st.print())
