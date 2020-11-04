@@ -1,0 +1,4 @@
+Q={p,q,r}
+E={a,b}
+F={r}
+Delta={(p,a)->q;(q,a)->q;(q,b)->r;(p,b)->r}
