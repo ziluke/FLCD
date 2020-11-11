@@ -4,8 +4,25 @@ class FA:
             self.Q = self.__token_line(file.readline().strip())
             self.Q0 = self.Q[0]
             self.E = self.__token_line(file.readline().strip())
+
             self.F = self.__token_line(file.readline().strip())
+
+            for final in self.F:
+                if final not in self.Q:
+                    raise Exception
+
             self.Delta = self.__token_transitions(file.readline().strip())
+
+            for key in self.Delta.keys():
+                key = key[1:-1]
+                key = key.split(",")[0]
+                if key not in self.Q:
+                    raise Exception
+
+            for value in self.Delta.values():
+                for val in value:
+                    if val not in self.Q:
+                        raise Exception
 
     def __token_line(self, line):
         token = line.split("=")[1]
