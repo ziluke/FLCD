@@ -11,6 +11,15 @@ public class Main {
         Grammar grammar = new Grammar("grammar.in");
         Parser parser = new Parser(grammar);
 
+        System.out.println(parser.getFirst());
+        System.out.println(parser.getFollow());
+
+        try {
+            parser.computeParsingTable();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         System.out.println("Seq: " + parser.parseSequence(new ArrayList<>() {{
             add("id");
             add("*");
