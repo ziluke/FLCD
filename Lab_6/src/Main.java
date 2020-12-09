@@ -119,6 +119,8 @@ public class Main {
         System.out.println(grammar);
         Parser parser = new Parser(grammar);
 
+        System.out.println("here");
+
         try {
             parser.computeParsingTable();
         } catch (IllegalAccessException e) {
@@ -129,6 +131,8 @@ public class Main {
         sequence = readFromPIF();
         var output = parser.parseSequence(sequence);
         System.out.println(output);
+
+        System.out.println(grammar.getProductionWithOrderNumber());
 
         ParsingSequenceTable table = new ParsingSequenceTable(grammar.getProductionWithOrderNumber(), output, parser);
 

@@ -2,6 +2,7 @@ package parser;
 
 import grammar.Grammar;
 
+import java.io.FileWriter;
 import java.util.*;
 
 
@@ -466,6 +467,14 @@ public class Parser {
                 prodIndex++;
             }
         }
+
+        try{
+            FileWriter myWriter = new FileWriter("parsingTable.txt");
+            myWriter.write(this.toString());
+            myWriter.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public HashMap<Pair, ParsingTableCell> getParsingTable() {
@@ -546,7 +555,7 @@ public class Parser {
     public String toString() {
         var builder = new StringBuilder(" ");
 
-        var terminals = grammar.getTerminals();
+        var terminals = (ArrayList<String>) grammar.getTerminals().clone();
         terminals.add("$");
 
         for (var elem : terminals

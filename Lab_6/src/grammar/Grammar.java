@@ -75,6 +75,7 @@ public class Grammar {
                                 String[] symbols = elem.split(" ");
                                 elements.add(new ArrayList<>(Arrays.asList(symbols)));
                                 this.productionWithOrderNumber.put(index, new HashMap<>(){{put(starting, new ArrayList<>(Arrays.asList(symbols)));}});
+                                index++;
                             }
                             this.productions.put(starting, elements);
                         }
