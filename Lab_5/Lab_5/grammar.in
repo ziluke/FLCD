@@ -1,4 +1,4 @@
 N={E,E',T,T',F}
 E={id,+,*,(,)}
-P={E->T E',E'->+ T E'|epsilon,T->F T',T'->* F T'|epsilon,F->id|( E )}
+P={E->T E',E'->+ T E'|epsilon,T->F T',T'->* F T'|epsilon,F->( E )|id}
 S={E}

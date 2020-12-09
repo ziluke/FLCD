@@ -1,26 +1,22 @@
 import grammar.Grammar;
+import parse_sequence_table.ParsingSequenceTable;
 import parser.Pair;
 import parser.Parser;
-import parser.ParsingTableCell;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
         Grammar grammar = new Grammar("grammar.in");
+
         Parser parser = new Parser(grammar);
-
-        System.out.println(parser.getFirst());
-        System.out.println(parser.getFollow());
-
         try {
             parser.computeParsingTable();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        System.out.println("Seq: " + parser.parseSequence(new ArrayList<>() {{
+        var seq = parser.parseSequence(new ArrayList<>() {{
             add("id");
             add("*");
             add("(");
@@ -28,12 +24,14 @@ public class Main {
             add("+");
             add("id");
             add(")");
-        }}));
+        }});
 
-//        System.out.println("Seq: " + parser.parseSequence(new ArrayList<>() {{
+//        var seq = parser.parseSequence(new ArrayList<>() {{
 //            add("(");
 //            add(")");
-//        }}));
+//        }});
+
+        System.out.println("Seq: " + seq);
 
         var builder = new StringBuilder(" ");
 
@@ -57,5 +55,14 @@ public class Main {
         }
 
         System.out.println(builder.toString());
+
+        ParsingSequenceTable table = new ParsingSequenceTable(grammar.getProductionWithOrderNumber(), seq, parser);
+
+        var nodes = table.getNodes();
+
+        nodes.forEach(System.out::println);
+
     }
+
+
 }

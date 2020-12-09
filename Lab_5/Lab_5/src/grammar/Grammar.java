@@ -12,12 +12,14 @@ public class Grammar {
     private ArrayList<String> nonTerminals;
     private ArrayList<String> terminals;
     private HashMap<String, ArrayList<ArrayList<String>>> productions;
+    private HashMap<Integer, HashMap<String, ArrayList<String>>> productionWithOrderNumber;
     private String startingSymbol;
 
     public Grammar(String fileName) {
         this.nonTerminals = new ArrayList<>();
         this.terminals = new ArrayList<>();
         this.productions = new HashMap<>();
+        this.productionWithOrderNumber = new HashMap<>();
         this.startingSymbol = "";
         readFromFile(fileName);
     }
@@ -37,6 +39,7 @@ public class Grammar {
         try {
             reader = new BufferedReader(new FileReader(fileName));
             String line = reader.readLine();
+            int index = 1;
             while(line != null){
                 String set = line.split("=")[0];
                 String[] util = line.substring(line.indexOf("{") + 1, line.indexOf("}")).split(",");
@@ -56,6 +59,8 @@ public class Grammar {
                             for(String elem: ending){
                                 String[] symbols = elem.split(" ");
                                 elements.add(new ArrayList<>(Arrays.asList(symbols)));
+                                this.productionWithOrderNumber.put(index, new HashMap<>(){{put(starting, new ArrayList<>(Arrays.asList(symbols)));}});
+                                index++;
                             }
                             this.productions.put(starting, elements);
                         }
@@ -72,7 +77,6 @@ public class Grammar {
             e.printStackTrace();
         }
     }
-
 
     public ArrayList<String> getNonTerminals() {
         return nonTerminals;
@@ -96,6 +100,10 @@ public class Grammar {
 
     public void setProductions(HashMap<String, ArrayList<ArrayList<String>>> productions) {
         this.productions = productions;
+    }
+
+    public HashMap<Integer, HashMap<String, ArrayList<String>>> getProductionWithOrderNumber() {
+        return productionWithOrderNumber;
     }
 
     public String getStartingSymbol() {

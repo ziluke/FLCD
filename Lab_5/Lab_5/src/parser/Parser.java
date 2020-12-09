@@ -6,66 +6,25 @@ import java.util.*;
 
 
 public class Parser {
+
     private final Grammar grammar;
     private HashMap<String, ArrayList<String>> first;
     private HashMap<String, ArrayList<String>> follow;
     private HashMap<Pair, ParsingTableCell> parsingTable;
     Stack<String> inputStack = new Stack<>();
     Stack<String> workingStack = new Stack<>();
-    Stack<String> output = new Stack<>();
+    List<Integer> output = new ArrayList<>();
 
     public Parser(Grammar grammar) {
         this.grammar = grammar;
+
         this.first = new HashMap<>();
-//        this.first.put("E", new ArrayList<String>() {{
-//            add("id");
-//            add("(");
-//        }});
-//        this.first.put("E'", new ArrayList<String>() {{
-//            add("+");
-//            add("epsilon");
-//        }});
-//        this.first.put("T", new ArrayList<String>() {{
-//            add("id");
-//            add("(");
-//        }});
-//        this.first.put("T'", new ArrayList<String>() {{
-//            add("*");
-//            add("epsilon");
-//        }});
-//        this.first.put("F", new ArrayList<String>() {{
-//            add("id");
-//            add("(");
-//        }});
         this.computeFirst();
+
         this.follow = new HashMap<>();
-//        this.follow.put("E", new ArrayList<String>() {{
-//            add("$");
-//            add(")");
-//        }});
-//        this.follow.put("E'", new ArrayList<String>() {{
-//            add("$");
-//            add(")");
-//        }});
-//        this.follow.put("T", new ArrayList<String>() {{
-//            add("+");
-//            add("$");
-//            add(")");
-//        }});
-//        this.follow.put("T'", new ArrayList<String>() {{
-//            add("+");
-//            add("$");
-//            add(")");
-//        }});
-//        this.follow.put("F", new ArrayList<String>() {{
-//            add("*");
-//            add("+");
-//            add("$");
-//            add(")");
-//        }});
         this.computeFollow();
+
         this.parsingTable = new HashMap<>();
-//        this.computeParsingTable();
     }
 
     private void computeFirst() {
@@ -97,7 +56,7 @@ public class Parser {
                     for (String symbol : productionForNonTerminal)
                         if (this.grammar.getNonTerminals().contains(symbol))
                             rhsNonTerminals.add(symbol);
-                        else{
+                        else {
                             rhsTerminals = symbol;
                             break;
                         }
@@ -124,7 +83,7 @@ public class Parser {
                     for (String symbol : productionForNonTerminal)
                         if (this.grammar.getNonTerminals().contains(symbol))
                             rhsNonTerminals.add(symbol);
-                        else{
+                        else {
                             rhsTerminals = symbol;
                             break;
                         }
@@ -145,7 +104,6 @@ public class Parser {
                 set.add(s);
         return set;
     }
-
 
     private ArrayList<String> concatenation(ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> concatenationList = new ArrayList<>();
@@ -169,7 +127,7 @@ public class Parser {
         HashMap<String, ArrayList<String>> currentColumn = new HashMap<>();
         for (String nonTerminal : this.grammar.getNonTerminals()) {
             ArrayList<String> data = new ArrayList<>();
-            if(nonTerminal.equals(grammar.getStartingSymbol())){
+            if (nonTerminal.equals(grammar.getStartingSymbol())) {
                 data.add("epsilon");
             }
             currentColumn.put(nonTerminal, data);
@@ -194,13 +152,13 @@ public class Parser {
                 ArrayList<ArrayList<String>> productionsForNonTerminal = this.grammar.getProductions().get(nonTerminal);
 
                 for (ArrayList<String> productionForNonTerminal : productionsForNonTerminal) {
-                    for(int i = 0; i < productionForNonTerminal.size(); i++){
+                    for (int i = 0; i < productionForNonTerminal.size(); i++) {
                         String symbol = productionForNonTerminal.get(i);
                         //if the symbol is a non terminal
-                        if (this.grammar.getNonTerminals().contains(symbol)){
+                        if (this.grammar.getNonTerminals().contains(symbol)) {
                             // B->pA
                             // follow(A) += follow(B)
-                            if(i == productionForNonTerminal.size() - 1){
+                            if (i == productionForNonTerminal.size() - 1) {
                                 // FOLLOW(symbol) += FOLLOW(nonTerminal)
                                 ArrayList<String> var = new ArrayList<>(table.get(index).get(nonTerminal)); //FOLLOW(nonTerminal)
                                 ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -210,24 +168,23 @@ public class Parser {
                                 newColumn.put(symbol, aux);
                             }
                             //B -> p A q
-                            else{
+                            else {
                                 // if after A is a non terminal
-                                if(this.grammar.getNonTerminals().contains(productionForNonTerminal.get(i+1)))
-                                {
+                                if (this.grammar.getNonTerminals().contains(productionForNonTerminal.get(i + 1))) {
                                     // first(q)
                                     ArrayList<String> nonTerminals = new ArrayList<>();
                                     String terminal = null;
-                                    for(int j = i + 1; j < productionForNonTerminal.size(); j++)
-                                        if(this.grammar.getNonTerminals().contains(productionForNonTerminal.get(j)))
+                                    for (int j = i + 1; j < productionForNonTerminal.size(); j++)
+                                        if (this.grammar.getNonTerminals().contains(productionForNonTerminal.get(j)))
                                             nonTerminals.add(productionForNonTerminal.get(j));
-                                        else{
+                                        else {
                                             terminal = productionForNonTerminal.get(j);
                                             break;
                                         }
 
                                     ArrayList<String> firstOfWhatIsAfter = multipleConcatenation(this.first, nonTerminals, terminal);
                                     // if first(q) contains epsilon
-                                    if(firstOfWhatIsAfter.contains("epsilon")) {
+                                    if (firstOfWhatIsAfter.contains("epsilon")) {
                                         // FOLLOW(symbol) += FOLLOW(nonTerminal)
                                         ArrayList<String> var = new ArrayList<>(table.get(index).get(nonTerminal)); //FOLLOW(nonTerminal)
                                         ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -248,9 +205,9 @@ public class Parser {
                                 }
                                 // if after A is a terminal (i.e. q is a terminal), then first(q) = q
                                 // follow(A) += first(q)
-                                else{
+                                else {
                                     ArrayList<String> f = new ArrayList<>();
-                                    f.add(productionForNonTerminal.get(i+1));
+                                    f.add(productionForNonTerminal.get(i + 1));
                                     // if that terminal is epsilon, we do not add anything
                                     f.remove("epsilon");
                                     ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -285,13 +242,13 @@ public class Parser {
                 ArrayList<ArrayList<String>> productionsForNonTerminal = this.grammar.getProductions().get(nonTerminal);
 
                 for (ArrayList<String> productionForNonTerminal : productionsForNonTerminal) {
-                    for(int i = 0; i < productionForNonTerminal.size(); i++){
+                    for (int i = 0; i < productionForNonTerminal.size(); i++) {
                         String symbol = productionForNonTerminal.get(i);
                         //if the symbol is a non terminal
-                        if (this.grammar.getNonTerminals().contains(symbol)){
+                        if (this.grammar.getNonTerminals().contains(symbol)) {
                             // B->pA
                             // follow(A) += follow(B)
-                            if(i == productionForNonTerminal.size() - 1){
+                            if (i == productionForNonTerminal.size() - 1) {
                                 // FOLLOW(symbol) += FOLLOW(nonTerminal)
                                 ArrayList<String> var = new ArrayList<>(table.get(index).get(nonTerminal)); //FOLLOW(nonTerminal)
                                 ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -301,24 +258,23 @@ public class Parser {
                                 newColumn.put(symbol, aux);
                             }
                             //B -> p A q
-                            else{
+                            else {
                                 // if after A is a non terminal
-                                if(this.grammar.getNonTerminals().contains(productionForNonTerminal.get(i+1)))
-                                {
+                                if (this.grammar.getNonTerminals().contains(productionForNonTerminal.get(i + 1))) {
                                     // first(q)
                                     ArrayList<String> nonTerminals = new ArrayList<>();
                                     String terminal = null;
-                                    for(int j = i + 1; j < productionForNonTerminal.size(); j++)
-                                        if(this.grammar.getNonTerminals().contains(productionForNonTerminal.get(j)))
+                                    for (int j = i + 1; j < productionForNonTerminal.size(); j++)
+                                        if (this.grammar.getNonTerminals().contains(productionForNonTerminal.get(j)))
                                             nonTerminals.add(productionForNonTerminal.get(j));
-                                        else{
+                                        else {
                                             terminal = productionForNonTerminal.get(j);
                                             break;
                                         }
 
                                     ArrayList<String> firstOfWhatIsAfter = multipleConcatenation(this.first, nonTerminals, terminal);
                                     // if first(q) contains epsilon
-                                    if(firstOfWhatIsAfter.contains("epsilon")) {
+                                    if (firstOfWhatIsAfter.contains("epsilon")) {
                                         // FOLLOW(symbol) += FOLLOW(nonTerminal)
                                         ArrayList<String> var = new ArrayList<>(table.get(index).get(nonTerminal)); //FOLLOW(nonTerminal)
                                         ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -339,9 +295,9 @@ public class Parser {
                                 }
                                 // if after A is a terminal (i.e. q is a terminal), then first(q) = q
                                 // follow(A) += first(q)
-                                else{
+                                else {
                                     ArrayList<String> f = new ArrayList<>();
-                                    f.add(productionForNonTerminal.get(i+1));
+                                    f.add(productionForNonTerminal.get(i + 1));
                                     // if that terminal is epsilon, we do not add anything
                                     f.remove("epsilon");
                                     ArrayList<String> aux = new ArrayList<>(newColumn.get(symbol));
@@ -414,7 +370,6 @@ public class Parser {
         }
         return multipleConcatenation(this.first, rhsNonTerminals, terminal);
     }
-
 
     public void computeParsingTable() throws IllegalAccessException {
         ArrayList<String> allSymbols = (ArrayList<String>) grammar.getNonTerminals().clone();
@@ -520,7 +475,7 @@ public class Parser {
         return parsingTable;
     }
 
-    public boolean parseSequence(ArrayList<String> sequence) {
+    public List<Integer> parseSequence(ArrayList<String> sequence) {
         initializeStacks(sequence);
 
         boolean go = true;
@@ -531,9 +486,7 @@ public class Parser {
             String headOfWorkingStack = workingStack.peek();
 
             if (headOfWorkingStack.equals("$") && headOfInputStack.equals("$")) {
-
-                System.out.println(output);
-                return result;
+                return output;
             }
 
             Pair pair = new Pair(headOfWorkingStack, headOfInputStack);
@@ -549,7 +502,7 @@ public class Parser {
 
             if (cell == null) {
                 go = false;
-                result = false;
+                output.add(-1);
             } else {
                 ArrayList<String> seq = cell.getSequence();
                 int productionNumber = cell.getProductionNumber();
@@ -566,15 +519,11 @@ public class Parser {
                             workingStack.push(seq.get(i));
 
                     }
-                    output.push(String.valueOf(productionNumber));
+                    output.add(productionNumber);
                 }
             }
-
-
         }
-
-        System.out.println(output);
-        return result;
+        return output;
 
     }
 
@@ -589,6 +538,36 @@ public class Parser {
         workingStack.push(grammar.getStartingSymbol());
 
         output.clear();
-        output.push("epsilon");
+//        output.push("epsilon");
+    }
+
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
+    @Override
+    public String toString() {
+        var builder = new StringBuilder(" ");
+
+        var terminals = grammar.getTerminals();
+        terminals.add("$");
+
+        for (var elem : terminals
+        ) {
+            builder.append(elem).append(",");
+        }
+        builder.append("\n");
+
+
+        for (var nonTerminal : grammar.getNonTerminals()) {
+            builder.append(nonTerminal);
+            for (var terminal : terminals) {
+                Pair pair = new Pair(nonTerminal, terminal);
+                builder.append(",").append(this.getParsingTable().get(pair)).append(" ");
+            }
+            builder.append("\n");
+        }
+
+        return builder.toString();
     }
 }
