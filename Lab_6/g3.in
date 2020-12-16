@@ -1,4 +1,4 @@
-N---S,A,B,C,D,E,F
-E---+,*,a,(,)
-P---S->( A ),A->B C,C->A|epsilon,B->D|E|F,D->+,E->*,F->a
-S---S
+N---E,E',T,T',F
+E---id,+,*,(,)
+P---E->T E',E'->+ T E'|epsilon,T->F T',T'->* F T'|epsilon,F->id|( E )
+S---E

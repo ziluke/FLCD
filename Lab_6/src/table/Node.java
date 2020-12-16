@@ -58,6 +58,6 @@ public class Node {
                 ", info=" + info +
                 ", father=" + father +
                 ", sibling=" + sibling +
-                '}';
+                '}' + "\n";
     }
 }

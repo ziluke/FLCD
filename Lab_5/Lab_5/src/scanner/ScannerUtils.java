@@ -1,5 +1,7 @@
 package scanner;
 
+
+
 import symbolTable.SymbolTable;
 
 import java.io.*;
