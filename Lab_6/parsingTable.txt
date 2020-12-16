@@ -1,0 +1,6 @@
+ id,+,*,(,),$,
+E,([T, E'], 1) ,null ,null ,([T, E'], 1) ,null ,null 
+E',null ,([+, T, E'], 2) ,null ,null ,([epsilon], 3) ,([epsilon], 3) 
+T,([F, T'], 4) ,null ,null ,([F, T'], 4) ,null ,null 
+T',null ,([epsilon], 6) ,([*, F, T'], 5) ,null ,([epsilon], 6) ,([epsilon], 6) 
+F,([id], 7) ,null ,null ,([(, E, )], 8) ,null ,null 
